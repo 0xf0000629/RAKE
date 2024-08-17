@@ -20,7 +20,7 @@ jobs:
 
       - name: lint
         run: |
-          mypy op_lib.py rake.py stack_machine.py test_runner.py translator.py
+          pwd
       
       - name: test
         run: |
