@@ -1,6 +1,5 @@
 name: Mypy lint and test
 
-# This workflow will run on push and pull request events
 on:
   push:
     branches:
@@ -10,23 +9,24 @@ on:
       - main
 
 jobs:
-  - mypy:
+  mypy:
     runs-on: windows-latest
 
-    - name: install mypy
-      run:
-        python -m pip install --upgrade pip
-        pip install mypy
+    steps:
+      - name: install mypy
+        run: |
+          python -m pip install --upgrade pip
+          pip install mypy
 
-    - name: lint
-      run:
-        mypy .
-    
-    - name: test
-      run:
-        python test_runner.py cat
-        python test_runner.py hello
-        python test_runner.py hello_user_name
-        python test_runner.py prob1
+      - name: lint
+        run: |
+          mypy .
+      
+      - name: test
+        run: |
+          python test_runner.py cat
+          python test_runner.py hello
+          python test_runner.py hello_user_name
+          python test_runner.py prob1
 
 
