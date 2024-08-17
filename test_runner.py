@@ -30,23 +30,23 @@ prelinked_tests = dict(
 )
 
 if len(sys.argv) == 5:
-    myself, cfile, tfile, ofile, lfile = sys.argv
+    myself, cdfile, tsfile, oufile, lofile = sys.argv
 elif len(sys.argv) == 2:
     assert sys.argv[1] in prelinked_tests, "No test found with that name. Available tests: " + prelinked_tests.keys
-    cfile = prelinked_tests[sys.argv[1]]["code"]
-    tfile = prelinked_tests[sys.argv[1]]["test"]
-    ofile = prelinked_tests[sys.argv[1]]["output"]
-    lfile = prelinked_tests[sys.argv[1]]["logs"]
+    cdfile = prelinked_tests[sys.argv[1]]["code"]
+    tsfile = prelinked_tests[sys.argv[1]]["test"]
+    oufile = prelinked_tests[sys.argv[1]]["output"]
+    lofile = prelinked_tests[sys.argv[1]]["logs"]
 else:
     print("Usage: testme.py <test_name>")
     print("or")
     print("testme.py <code_file> <test_file> <output_file> <logs_file>")
     quit(1)
 
-codefile = open(cfile, "r", encoding="utf-8")
-testfile = open(tfile, "r", encoding="utf-8")
-outfile = open(ofile, "w", encoding="utf-8")
-logfile = open(lfile, "w", encoding="utf-8")
+codefile = open(cdfile, "r", encoding="utf-8")
+testfile = open(tsfile, "r", encoding="utf-8")
+outfile = open(oufile, "w", encoding="utf-8")
+logfile = open(lofile, "w", encoding="utf-8")
 
 test = json.loads(testfile.read())
 testfile.close()
