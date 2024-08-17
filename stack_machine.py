@@ -220,9 +220,10 @@ if __name__ == "__main__":
     ifile = open(data_input, "r", encoding="utf-8")
     cfile = open(code_input, "r", encoding="utf-8")
     data = json.loads(cfile.read())
-    code = [dict()] * 250 + [0] * 750
+    code = []
     for i in range(250):
-        code[i] = dict()
+        code[i].append(dict())
+    code[i].append([0] * 750)
     for i in range(len(data)):
         code[data[i]["index"]] = data[i]["value"]
     inp = json.loads(ifile.read())    
