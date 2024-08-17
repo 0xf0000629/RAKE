@@ -1,0 +1,4 @@
+{
+    "input":["A", "l", "i", "c", "e", 0],
+    "expected":"What is your name? Hello, Alice!"
+}

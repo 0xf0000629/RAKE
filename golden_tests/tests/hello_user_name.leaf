@@ -1,0 +1,10 @@
+.'What is your name? ' 
+.'Hello, ' 
+i=0 i 100 + loop 
+    in 0 == if 
+        99 =i 
+    else 
+        drop . drop 
+    then 
+loopend 
+.'!'

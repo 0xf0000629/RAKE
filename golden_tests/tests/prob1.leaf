@@ -1,0 +1,23 @@
+i=1 
+sum=0 
+good=0 
+i 1000 + loop 
+    0 =good 
+    drop 
+    i ! 5 % 0 == if 
+        1 =good 
+        drop 
+    then 
+    drop drop 
+    i ! 3 % 0 == if 
+        1 =good 
+        drop 
+    then 
+    drop drop 
+    good ! 1 == if 
+        sum ! i ! + =sum 
+        drop 
+    then 
+    drop drop 
+loopend 
+sum ! .

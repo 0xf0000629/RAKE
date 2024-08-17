@@ -1,0 +1,75 @@
+from stack_machine import *
+from translator import *
+import sys
+
+prelinked_tests = dict(
+    cat = dict(
+        code="golden_tests/tests/cat.leaf",
+        test="golden_tests/tests/cat.json",
+        output="golden_tests/output/cat_out.txt",
+        logs="golden_tests/output/cat.log"
+    ),
+    hello = dict(
+        code="golden_tests/tests/hello.leaf",
+        test="golden_tests/tests/hello.json",
+        output="golden_tests/output/hello_out.txt",
+        logs="golden_tests/output/hello.log"
+    ),
+    hello_user_name = dict(
+        code="golden_tests/tests/hello_user_name.leaf",
+        test="golden_tests/tests/hello_user_name.json",
+        output="golden_tests/output/hello_user_name_out.txt",
+        logs="golden_tests/output/hello_user_name.log"
+    ),
+    prob1 = dict(
+        code="golden_tests/tests/prob1.leaf",
+        test="golden_tests/tests/prob1.json",
+        output="golden_tests/output/prob1_out.txt",
+        logs="golden_tests/output/prob1.log"
+    ),
+)
+
+if len(sys.argv) == 5:
+    myself, cfile, tfile, ofile, lfile = sys.argv
+elif len(sys.argv) == 2:
+    assert sys.argv[1] in prelinked_tests, "No test found with that name. Available tests: " + prelinked_tests.keys
+    cfile = prelinked_tests[sys.argv[1]]["code"]
+    tfile = prelinked_tests[sys.argv[1]]["test"]
+    ofile = prelinked_tests[sys.argv[1]]["output"]
+    lfile = prelinked_tests[sys.argv[1]]["logs"]
+else:
+    print("Usage: testme.py <test_name>")
+    print("or")
+    print("testme.py <code_file> <test_file> <output_file> <logs_file>")
+    quit(1)
+
+codefile = open(cfile, "r", encoding="utf-8")
+testfile = open(tfile, "r", encoding="utf-8")
+outfile = open(ofile, "w", encoding="utf-8")
+logfile = open(lfile, "w", encoding="utf-8")
+
+test = json.loads(testfile.read())
+testfile.close()
+
+assert "input" in test, "no program input!"
+assert "expected" in test, "no output to compare to!"
+
+
+code = parse_all(codefile.read())
+codefile.close()
+result = simulate(code, 200, test["input"])
+outp = result[1]
+logs = []
+for i in range(len(result[0])):
+    logs.append(json.dumps(result[0][i]))
+logfile.write("[" + ",\n".join(logs) + "]")
+outp = "".join(str(x)+'' for x in outp)
+outfile.write(outp)
+
+logfile.close()
+outfile.close()
+
+if outp == test["expected"]:
+    print("output: '" + outp + "', expected: '" + test["expected"] + "'" + ", OK")
+else:
+    print("output: '" + outp + "', expected: '" + test["expected"] + "'" + ", FAIL")
