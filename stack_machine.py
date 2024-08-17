@@ -220,7 +220,7 @@ if __name__ == "__main__":
     ifile = open(data_input, "r", encoding="utf-8")
     cfile = open(code_input, "r", encoding="utf-8")
     data = json.loads(cfile.read())
-    code = list()
+    code = list[dict()]
     for i in range(250):
         code.append(dict())
     code.append([0] * 750)
