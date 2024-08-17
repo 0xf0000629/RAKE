@@ -222,8 +222,8 @@ if __name__ == "__main__":
     data = json.loads(cfile.read())
     code = []
     for i in range(250):
-        code[i].append(dict())
-    code[i].append([0] * 750)
+        code.append(dict())
+    code.append([0] * 750)
     for i in range(len(data)):
         code[data[i]["index"]] = data[i]["value"]
     inp = json.loads(ifile.read())    
