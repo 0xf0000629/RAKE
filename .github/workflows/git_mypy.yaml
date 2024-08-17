@@ -20,7 +20,7 @@ jobs:
 
       - name: lint
         run: |
-          pwd
+          ls
       
       - name: test
         run: |
