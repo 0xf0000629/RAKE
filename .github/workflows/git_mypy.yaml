@@ -20,7 +20,7 @@ jobs:
 
       - name: lint
         run: |
-          mypy .
+          mypy *.py
       
       - name: test
         run: |
