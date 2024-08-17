@@ -11,9 +11,9 @@ on:
 
 jobs:
   - name: install mypy
-        run:
-          python -m pip install --upgrade pip
-          pip install mypy
+    run:
+      python -m pip install --upgrade pip
+      pip install mypy
 
   - name: lint
     run:
