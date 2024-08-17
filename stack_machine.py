@@ -1,4 +1,5 @@
 from op_lib import opcode, opcode_dict
+from typing import List, Union, Dict
 import sys, json
 
 
@@ -220,7 +221,7 @@ if __name__ == "__main__":
     ifile = open(data_input, "r", encoding="utf-8")
     cfile = open(code_input, "r", encoding="utf-8")
     data = json.loads(cfile.read())
-    icode = []
+    icode: List[Union[Dict, int]]
     for i in range(250):
         icode.append(dict())
     icode.append([0] * 750)
