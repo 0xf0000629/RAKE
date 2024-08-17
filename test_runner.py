@@ -32,7 +32,7 @@ prelinked_tests = dict(
 if len(sys.argv) == 5:
     myself, cdfile, tsfile, oufile, lofile = sys.argv
 elif len(sys.argv) == 2:
-    assert sys.argv[1] in prelinked_tests, "No test found with that name. Available tests: " + prelinked_tests.keys.__str__
+    assert sys.argv[1] in prelinked_tests, "No test found with that name. Available tests: " + list(prelinked_tests.keys()).__str__
     cdfile = prelinked_tests[sys.argv[1]]["code"]
     tsfile = prelinked_tests[sys.argv[1]]["test"]
     oufile = prelinked_tests[sys.argv[1]]["output"]
