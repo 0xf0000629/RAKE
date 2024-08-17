@@ -224,7 +224,8 @@ if __name__ == "__main__":
     icode: List[Union[Dict, int]]
     for i in range(250):
         icode.append(dict())
-    icode.append([0] * 750)
+    for i in range(750):
+        icode.append(0)
     for i in range(len(data)):
         icode[data[i]["index"]] = data[i]["value"]
     inp = json.loads(ifile.read())    
