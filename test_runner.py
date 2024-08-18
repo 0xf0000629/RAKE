@@ -39,9 +39,9 @@ elif len(sys.argv) == 2:
     oufile = prelinked_tests[sys.argv[1]]["output"]
     lofile = prelinked_tests[sys.argv[1]]["logs"]
 else:
-    print("Usage: testme.py <test_name>")
+    print("Usage: test_runner.py <test_name>")
     print("or")
-    print("testme.py <code_file> <test_file> <output_file> <logs_file>")
+    print("test_runner.py <code_file> <test_file> <output_file> <logs_file>")
     quit(1)
 
 codefile = open(cdfile, "r", encoding="utf-8")
