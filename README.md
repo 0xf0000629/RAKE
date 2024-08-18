@@ -80,3 +80,169 @@ Golden-тесты (``test_runner.py <test_name>``)
 - hello ([code](golden_tests/tests/hello.leaf)|[input](golden_tests/tests/hello.json)) - выводит 'hello world!'
 - hello_user_name ([code](golden_tests/tests/hello_user_name.leaf)|[input](golden_tests/tests/hello_user_name.json)) - получает из ввода имя пользователя и приветствует его
 - prob1 ([code](golden_tests/tests/prob1.leaf)|[input](golden_tests/tests/prob1.json)) - находит сумму всех чисел, кратных 3 и 5 и строго меньше 1000
+
+CI скрипт ([ссылка](.github/workflows/git_mypy.yaml)):
+```
+name: Mypy lint and test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  mypy:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: install mypy
+        run: |
+          python -m pip install --upgrade pip
+          pip install mypy
+
+      - name: lint
+        run: |
+          mypy op_lib.py rake.py stack_machine.py test_runner.py translator.py
+      
+      - name: test
+        run: |
+          python test_runner.py cat
+          python test_runner.py hello
+          python test_runner.py hello_user_name
+          python test_runner.py prob1
+```
+Прогон работы test:
+```
+python test_runner.py cat
+python test_runner.py hello
+python test_runner.py hello_user_name
+python test_runner.py prob1
+
+(golden_tests/tests/cat.json, golden_tests/tests/cat.leaf) output: 'Hello', expected: 'Hello', OK
+(golden_tests/tests/hello.json, golden_tests/tests/hello.leaf) output: 'hello world', expected: 'hello world', OK
+(golden_tests/tests/hello_user_name.json, golden_tests/tests/hello_user_name.leaf) output: 'What is your name? Hello, Alice!', expected: 'What is your name? Hello, Alice!', OK
+(golden_tests/tests/prob1.json, golden_tests/tests/prob1.leaf) output: '233168', expected: '233168', OK
+```
+
+Запуск теста cat:
+```
+PS D:\Programming\Python\Rake\RAKE> cat golden_tests/tests/cat.leaf
+i=0 
+i 2000000000 + loop
+    in
+    .
+loopend
+PS D:\Programming\Python\Rake\RAKE> & C:/Users/xfutu/AppData/Local/Programs/Python/Python38/python.exe translator.py golden_tests/tests/cat.leaf golden_tests/output/cat.dat
+PS D:\Programming\Python\Rake\RAKE> cat golden_tests/output/cat.dat
+[{"index": 0, "value": {"opcode": "jump", "arg": 1, "source": "<generated>"}},
+{"index": 1, "value": {"opcode": "push", "arg": 250, "source": "i 2000000000 + loop"}},
+{"index": 2, "value": {"opcode": "load", "source": "i 2000000000 + loop"}},
+{"index": 3, "value": {"opcode": "push", "arg": 2000000000, "source": "i 2000000000 + loop"}},
+{"index": 4, "value": {"opcode": "lst", "source": "i 2000000000 + loop"}},
+{"index": 5, "value": {"opcode": "pop", "source": "i 2000000000 + loop"}},
+{"index": 6, "value": {"opcode": "pop", "source": "i 2000000000 + loop"}},
+{"index": 7, "value": {"opcode": "jumpzero", "source": "i 2000000000 + loop", "arg": 16}},
+{"index": 8, "value": {"opcode": "input", "source": "in"}},
+{"index": 9, "value": {"opcode": "output", "source": "."}},
+{"index": 10, "value": {"opcode": "push", "arg": 250, "source": "loopend"}},
+{"index": 11, "value": {"opcode": "load", "source": "loopend"}},
+{"index": 12, "value": {"opcode": "inc", "source": "loopend"}},
+{"index": 13, "value": {"opcode": "save", "arg": 250, "source": "loopend"}},
+{"index": 14, "value": {"opcode": "pop", "source": "loopend"}},
+{"index": 15, "value": {"opcode": "jump", "source": "loopend", "arg": 1}},
+{"index": 16, "value": {"opcode": "halt", "source": "<generated>"}}]
+PS D:\Programming\Python\Rake\RAKE> cat golden_tests/tests/cat.txt 
+['H', 'e', 'l', 'l', 'o']
+PS D:\Programming\Python\Rake\RAKE> & C:/Users/xfutu/AppData/Local/Programs/Python/Python38/python.exe stack_machine.py golden_tests/tests/cat.txt golden_tests/output/cat.dat golden_tests/output/cat.log
+PS D:\Programming\Python\Rake\RAKE> cat golden_tests/output/cat.log
+[{"ip": 1, "tick": 1, "sp": 0, "cp": 0, "alu": 0, "instr": "push", "term": "i 2000000000 + loop"},
+{"ip": 2, "tick": 2, "sp": 1, "cp": 0, "alu": 0, "instr": "load", "term": "i 2000000000 + loop"},       
+{"ip": 3, "tick": 5, "sp": 1, "cp": 0, "alu": 0, "instr": "push", "term": "i 2000000000 + loop"},       
+{"ip": 4, "tick": 6, "sp": 2, "cp": 0, "alu": 0, "instr": "lst", "term": "i 2000000000 + loop"},        
+{"ip": 5, "tick": 8, "sp": 2, "cp": 0, "alu": true, "instr": "pop", "term": "i 2000000000 + loop"},     
+{"ip": 6, "tick": 9, "sp": 1, "cp": 0, "alu": true, "instr": "pop", "term": "i 2000000000 + loop"},
+{"ip": 7, "tick": 10, "sp": 0, "cp": 0, "alu": true, "instr": "jumpzero", "term": "i 2000000000 + loop"},
+{"ip": 8, "tick": 11, "sp": 0, "cp": 0, "alu": true, "instr": "input", "term": "in"},
+{"ip": 9, "tick": 13, "sp": 1, "cp": 0, "alu": "H", "instr": "output", "term": "."},
+{"ip": 10, "tick": 15, "sp": 1, "cp": 0, "alu": "H", "instr": "push", "term": "loopend"},
+{"ip": 11, "tick": 16, "sp": 2, "cp": 0, "alu": "H", "instr": "load", "term": "loopend"},
+{"ip": 12, "tick": 19, "sp": 2, "cp": 0, "alu": "H", "instr": "inc", "term": "loopend"},
+{"ip": 13, "tick": 21, "sp": 2, "cp": 0, "alu": 1, "instr": "save", "term": "loopend"},
+{"ip": 14, "tick": 22, "sp": 2, "cp": 0, "alu": 1, "instr": "pop", "term": "loopend"},
+{"ip": 15, "tick": 23, "sp": 1, "cp": 0, "alu": 1, "instr": "jump", "term": "loopend"},
+{"ip": 1, "tick": 24, "sp": 1, "cp": 0, "alu": 1, "instr": "push", "term": "i 2000000000 + loop"},      
+{"ip": 2, "tick": 25, "sp": 2, "cp": 0, "alu": 1, "instr": "load", "term": "i 2000000000 + loop"},      
+{"ip": 3, "tick": 28, "sp": 2, "cp": 0, "alu": 1, "instr": "push", "term": "i 2000000000 + loop"},      
+{"ip": 4, "tick": 29, "sp": 3, "cp": 0, "alu": 1, "instr": "lst", "term": "i 2000000000 + loop"},       
+{"ip": 5, "tick": 31, "sp": 3, "cp": 0, "alu": true, "instr": "pop", "term": "i 2000000000 + loop"},    
+{"ip": 6, "tick": 32, "sp": 2, "cp": 0, "alu": true, "instr": "pop", "term": "i 2000000000 + loop"},    
+{"ip": 7, "tick": 33, "sp": 1, "cp": 0, "alu": true, "instr": "jumpzero", "term": "i 2000000000 + loop"},
+{"ip": 8, "tick": 34, "sp": 1, "cp": 0, "alu": true, "instr": "input", "term": "in"},
+{"ip": 9, "tick": 36, "sp": 2, "cp": 0, "alu": "e", "instr": "output", "term": "."},
+{"ip": 10, "tick": 38, "sp": 2, "cp": 0, "alu": "e", "instr": "push", "term": "loopend"},
+{"ip": 11, "tick": 39, "sp": 3, "cp": 0, "alu": "e", "instr": "load", "term": "loopend"},
+{"ip": 12, "tick": 42, "sp": 3, "cp": 0, "alu": "e", "instr": "inc", "term": "loopend"},
+{"ip": 13, "tick": 44, "sp": 3, "cp": 0, "alu": 2, "instr": "save", "term": "loopend"},
+{"ip": 14, "tick": 45, "sp": 3, "cp": 0, "alu": 2, "instr": "pop", "term": "loopend"},
+{"ip": 15, "tick": 46, "sp": 2, "cp": 0, "alu": 2, "instr": "jump", "term": "loopend"},
+{"ip": 1, "tick": 47, "sp": 2, "cp": 0, "alu": 2, "instr": "push", "term": "i 2000000000 + loop"},      
+{"ip": 2, "tick": 48, "sp": 3, "cp": 0, "alu": 2, "instr": "load", "term": "i 2000000000 + loop"},      
+{"ip": 3, "tick": 51, "sp": 3, "cp": 0, "alu": 2, "instr": "push", "term": "i 2000000000 + loop"},      
+{"ip": 4, "tick": 52, "sp": 4, "cp": 0, "alu": 2, "instr": "lst", "term": "i 2000000000 + loop"},       
+{"ip": 5, "tick": 54, "sp": 4, "cp": 0, "alu": true, "instr": "pop", "term": "i 2000000000 + loop"},    
+{"ip": 6, "tick": 55, "sp": 3, "cp": 0, "alu": true, "instr": "pop", "term": "i 2000000000 + loop"},    
+{"ip": 7, "tick": 56, "sp": 2, "cp": 0, "alu": true, "instr": "jumpzero", "term": "i 2000000000 + loop"},
+{"ip": 8, "tick": 57, "sp": 2, "cp": 0, "alu": true, "instr": "input", "term": "in"},
+{"ip": 9, "tick": 59, "sp": 3, "cp": 0, "alu": "l", "instr": "output", "term": "."},
+{"ip": 10, "tick": 61, "sp": 3, "cp": 0, "alu": "l", "instr": "push", "term": "loopend"},
+{"ip": 11, "tick": 62, "sp": 4, "cp": 0, "alu": "l", "instr": "load", "term": "loopend"},
+{"ip": 12, "tick": 65, "sp": 4, "cp": 0, "alu": "l", "instr": "inc", "term": "loopend"},
+{"ip": 13, "tick": 67, "sp": 4, "cp": 0, "alu": 3, "instr": "save", "term": "loopend"},
+{"ip": 14, "tick": 68, "sp": 4, "cp": 0, "alu": 3, "instr": "pop", "term": "loopend"},
+{"ip": 15, "tick": 69, "sp": 3, "cp": 0, "alu": 3, "instr": "jump", "term": "loopend"},
+{"ip": 1, "tick": 70, "sp": 3, "cp": 0, "alu": 3, "instr": "push", "term": "i 2000000000 + loop"},      
+{"ip": 2, "tick": 71, "sp": 4, "cp": 0, "alu": 3, "instr": "load", "term": "i 2000000000 + loop"},      
+{"ip": 3, "tick": 74, "sp": 4, "cp": 0, "alu": 3, "instr": "push", "term": "i 2000000000 + loop"},      
+{"ip": 4, "tick": 75, "sp": 5, "cp": 0, "alu": 3, "instr": "lst", "term": "i 2000000000 + loop"},       
+{"ip": 5, "tick": 77, "sp": 5, "cp": 0, "alu": true, "instr": "pop", "term": "i 2000000000 + loop"},    
+{"ip": 6, "tick": 78, "sp": 4, "cp": 0, "alu": true, "instr": "pop", "term": "i 2000000000 + loop"},    
+{"ip": 7, "tick": 79, "sp": 3, "cp": 0, "alu": true, "instr": "jumpzero", "term": "i 2000000000 + loop"},
+{"ip": 8, "tick": 80, "sp": 3, "cp": 0, "alu": true, "instr": "input", "term": "in"},
+{"ip": 9, "tick": 82, "sp": 4, "cp": 0, "alu": "l", "instr": "output", "term": "."},
+{"ip": 10, "tick": 84, "sp": 4, "cp": 0, "alu": "l", "instr": "push", "term": "loopend"},
+{"ip": 11, "tick": 85, "sp": 5, "cp": 0, "alu": "l", "instr": "load", "term": "loopend"},
+{"ip": 12, "tick": 88, "sp": 5, "cp": 0, "alu": "l", "instr": "inc", "term": "loopend"},
+{"ip": 13, "tick": 90, "sp": 5, "cp": 0, "alu": 4, "instr": "save", "term": "loopend"},
+{"ip": 14, "tick": 91, "sp": 5, "cp": 0, "alu": 4, "instr": "pop", "term": "loopend"},
+{"ip": 15, "tick": 92, "sp": 4, "cp": 0, "alu": 4, "instr": "jump", "term": "loopend"},
+{"ip": 1, "tick": 93, "sp": 4, "cp": 0, "alu": 4, "instr": "push", "term": "i 2000000000 + loop"},      
+{"ip": 2, "tick": 94, "sp": 5, "cp": 0, "alu": 4, "instr": "load", "term": "i 2000000000 + loop"},      
+{"ip": 3, "tick": 97, "sp": 5, "cp": 0, "alu": 4, "instr": "push", "term": "i 2000000000 + loop"},      
+{"ip": 4, "tick": 98, "sp": 6, "cp": 0, "alu": 4, "instr": "lst", "term": "i 2000000000 + loop"},       
+{"ip": 5, "tick": 100, "sp": 6, "cp": 0, "alu": true, "instr": "pop", "term": "i 2000000000 + loop"},   
+{"ip": 6, "tick": 101, "sp": 5, "cp": 0, "alu": true, "instr": "pop", "term": "i 2000000000 + loop"},   
+{"ip": 7, "tick": 102, "sp": 4, "cp": 0, "alu": true, "instr": "jumpzero", "term": "i 2000000000 + loop"},
+{"ip": 8, "tick": 103, "sp": 4, "cp": 0, "alu": true, "instr": "input", "term": "in"},
+{"ip": 9, "tick": 105, "sp": 5, "cp": 0, "alu": "o", "instr": "output", "term": "."},
+{"ip": 10, "tick": 107, "sp": 5, "cp": 0, "alu": "o", "instr": "push", "term": "loopend"},
+{"ip": 11, "tick": 108, "sp": 6, "cp": 0, "alu": "o", "instr": "load", "term": "loopend"},
+{"ip": 12, "tick": 111, "sp": 6, "cp": 0, "alu": "o", "instr": "inc", "term": "loopend"},
+{"ip": 13, "tick": 113, "sp": 6, "cp": 0, "alu": 5, "instr": "save", "term": "loopend"},
+{"ip": 14, "tick": 114, "sp": 6, "cp": 0, "alu": 5, "instr": "pop", "term": "loopend"},
+{"ip": 15, "tick": 115, "sp": 5, "cp": 0, "alu": 5, "instr": "jump", "term": "loopend"},
+{"ip": 1, "tick": 116, "sp": 5, "cp": 0, "alu": 5, "instr": "push", "term": "i 2000000000 + loop"},     
+{"ip": 2, "tick": 117, "sp": 6, "cp": 0, "alu": 5, "instr": "load", "term": "i 2000000000 + loop"},     
+{"ip": 3, "tick": 120, "sp": 6, "cp": 0, "alu": 5, "instr": "push", "term": "i 2000000000 + loop"},     
+{"ip": 4, "tick": 121, "sp": 7, "cp": 0, "alu": 5, "instr": "lst", "term": "i 2000000000 + loop"},      
+{"ip": 5, "tick": 123, "sp": 7, "cp": 0, "alu": true, "instr": "pop", "term": "i 2000000000 + loop"},   
+{"ip": 6, "tick": 124, "sp": 6, "cp": 0, "alu": true, "instr": "pop", "term": "i 2000000000 + loop"},   
+{"ip": 7, "tick": 125, "sp": 5, "cp": 0, "alu": true, "instr": "jumpzero", "term": "i 2000000000 + loop"},
+{"ip": 8, "tick": 126, "sp": 5, "cp": 0, "alu": true, "instr": "input", "term": "in"}]
+Output: Hello
+```
