@@ -120,7 +120,7 @@ class ControlUnit:
         CU.memory = mem
         CU.ipointer = 0
         CU.running = 1
-        CU.tick = 1
+        CU.ticks = 0
     
     def latch(CU, shift):
         if shift == None:
@@ -128,63 +128,87 @@ class ControlUnit:
         else:
             CU.ipointer = shift
     
+    def tick(CU):
+        CU.ticks+=1
+    
     def execute(CU):
         CU.memory.latch(CU.ipointer)
         instruction = CU.memory.load()
         if instruction["opcode"] == opcode.PUSH:
             CU.datapath.push_data(instruction["arg"])
             CU.latch(None)
+            CU.tick()
         elif instruction["opcode"] == opcode.LOAD:
             CU.memory.latch(CU.datapath.get_tos(1))
+            CU.tick()
             CU.datapath.pop_data()
+            CU.tick()
             CU.datapath.push_data(CU.memory.load())
             CU.latch(None)
+            CU.tick()
         elif instruction["opcode"] == opcode.SAVE:
             CU.memory.latch(instruction["arg"])
             CU.memory.save(CU.datapath.get_tos(1))
             CU.latch(None)
+            CU.tick()
         elif instruction["opcode"] == opcode.POP:
             CU.datapath.pop_data()
             CU.latch(None)
+            CU.tick()
         elif instruction["opcode"] == opcode.CALL:
             CU.datapath.push_call(CU.ipointer)
             CU.latch(instruction["arg"])
+            CU.tick()
         elif instruction["opcode"] == opcode.RET:
             CU.datapath.pop_call()
+            CU.tick()
             CU.latch(CU.datapath.alu)
             CU.latch(None)
+            CU.tick()
         elif instruction["opcode"] == opcode.JMP:
             CU.latch(instruction["arg"])
+            CU.tick()
         elif instruction["opcode"] == opcode.JZ:
             if CU.datapath.alu == 0:
                 CU.latch(instruction["arg"])
+                CU.tick()
             else:
                 CU.latch(None)
+                CU.tick()
         elif instruction["opcode"] == opcode.IN:
             CU.datapath.input_data()
+            CU.tick()
             CU.datapath.push_data(CU.datapath.alu)
             if CU.datapath.alu == None:
                 CU.running = 0    
             else:
                 CU.latch(None)
+            CU.tick()
         elif instruction["opcode"] == opcode.OUT:
             CU.datapath.alu = CU.datapath.get_tos(1)
+            CU.tick()
             CU.datapath.io.write(CU.datapath.alu)
             CU.latch(None)
+            CU.tick()
         elif instruction["opcode"] == opcode.PRINT:
             CU.memory.latch(instruction["arg"])
             CU.datapath.alu = CU.memory.load()
+            CU.tick()
             while CU.datapath.alu != 0:
                 CU.datapath.io.write(CU.datapath.alu)
+                CU.tick()
                 CU.memory.latch(-1)
                 CU.datapath.alu = CU.memory.load()
+                CU.tick()
             CU.latch(None)
         elif instruction["opcode"] == opcode.HLT:
             CU.running = 0
         else:
             CU.datapath.latch_binary(instruction["opcode"])
+            CU.tick()
             if instruction["opcode"] not in [opcode.GRT, opcode.LST, opcode.EQL, opcode.NONE]:
                 CU.datapath.push_data(CU.datapath.alu)
+            CU.tick()
             CU.latch(None)
         
 
@@ -203,7 +227,7 @@ def simulate(code, limit, input):
         if control_unit.running == 1: 
             logs.append(dict(
                     ip=control_unit.ipointer, 
-                    tick=control_unit.tick, 
+                    tick=control_unit.ticks, 
                     sp=control_unit.datapath.datapointer, 
                     cp=control_unit.datapath.callpointer, 
                     alu=control_unit.datapath.alu, 
@@ -216,26 +240,27 @@ def simulate(code, limit, input):
     return logs, output
 
 if __name__ == "__main__":
-    assert len(sys.argv) == 3, "Usage: stack_machine.py <input_file> <code_file>"
-    myself, data_input, code_input = sys.argv
+    assert len(sys.argv) == 4, "Usage: stack_machine.py <input_file> <code_file> <log_file>"
+    myself, data_input, code_input, log_output = sys.argv
     ifile = open(data_input, "r", encoding="utf-8")
     cfile = open(code_input, "r", encoding="utf-8")
+    lfile = open(log_output, "w", encoding="utf-8")
     data = json.loads(cfile.read())
-    icode: List[Union[Dict, int]]
+    icode: List[Union[Dict, int]] = []
     for i in range(250):
         icode.append(dict())
     for i in range(750):
         icode.append(0)
     for i in range(len(data)):
         icode[data[i]["index"]] = data[i]["value"]
-    inp = json.loads(ifile.read())    
+    inp = ifile.read().split(' ')
     result = simulate(icode, 200, inp)
     outp = result[1]
     logs = []
     for i in range(len(result[0])):
         logs.append(json.dumps(result[0][i]))
-    print("[" + ",\n".join(logs) + "]")
-    print("".join(str(x)+'' for x in outp))
+    lfile.write("[" + ",\n".join(logs) + "]")
+    lfile.write("\nOutput: " + "".join(str(x)+'' for x in outp))
 
 
 

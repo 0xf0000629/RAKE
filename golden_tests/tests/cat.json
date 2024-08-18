@@ -1,4 +1,4 @@
 {
-    "input":["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"],
-    "expected":"abcdefghij"
+    "input":["H", "e", "l", "l", "o"],
+    "expected":"Hello"
 }
