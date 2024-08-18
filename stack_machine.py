@@ -224,6 +224,7 @@ def simulate(code, limit, input):
 
     while control_unit.ipointer < limit:
         control_unit.execute()
+        inst_count+=1
         if control_unit.running == 1: 
             logs.append(dict(
                     ip=control_unit.ipointer, 
@@ -234,7 +235,6 @@ def simulate(code, limit, input):
                     instr=code[control_unit.ipointer]["opcode"],
                     term=code[control_unit.ipointer]["source"]
             ))
-            inst_count+=1
         else:
             break
 

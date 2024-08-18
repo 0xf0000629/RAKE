@@ -1,2 +1,5 @@
 [{"ip": 1, "tick": 1, "sp": 0, "cp": 0, "alu": 0, "instr": "print", "term": ".'hello world'"},
-{"ip": 2, "tick": 1, "sp": 0, "cp": 0, "alu": 0, "instr": "halt", "term": "<generated>"}]
+{"ip": 2, "tick": 24, "sp": 0, "cp": 0, "alu": 0, "instr": "halt", "term": "<generated>"}]
+Output: 'hello world'
+Ticks: 24
+Insctructions: 3
