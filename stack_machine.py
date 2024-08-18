@@ -218,7 +218,7 @@ def simulate(code, limit, input):
     iounit = IOUnit(input, output)
     mem = Memory(code)
     dpath = DataPath(1000, iounit)
-
+    inst_count = 0
     logs = []
     control_unit = ControlUnit(dpath, mem)
 
@@ -234,10 +234,11 @@ def simulate(code, limit, input):
                     instr=code[control_unit.ipointer]["opcode"],
                     term=code[control_unit.ipointer]["source"]
             ))
+            inst_count+=1
         else:
             break
 
-    return logs, output
+    return logs, output, control_unit.ticks, inst_count
 
 if __name__ == "__main__":
     assert len(sys.argv) == 4, "Usage: stack_machine.py <input_file> <code_file> <log_file>"
@@ -260,7 +261,9 @@ if __name__ == "__main__":
     for i in range(len(result[0])):
         logs.append(json.dumps(result[0][i]))
     lfile.write("[" + ",\n".join(logs) + "]")
-    lfile.write("\nOutput: " + "".join(str(x)+'' for x in outp))
+    lfile.write("\nOutput: '" + "".join(str(x)+'' for x in outp) + "'")
+    lfile.write("\nTicks: " + str(result[2]))
+    lfile.write("\nInsctructions: " + str(result[3]))
 
 
 

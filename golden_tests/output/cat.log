@@ -81,4 +81,6 @@
 {"ip": 6, "tick": 124, "sp": 6, "cp": 0, "alu": true, "instr": "pop", "term": "i 2000000000 + loop"},
 {"ip": 7, "tick": 125, "sp": 5, "cp": 0, "alu": true, "instr": "jumpzero", "term": "i 2000000000 + loop"},
 {"ip": 8, "tick": 126, "sp": 5, "cp": 0, "alu": true, "instr": "input", "term": "in"}]
-Output: Hello
+Output: 'Hello'
+Ticks: 128
+Insctructions: 83
