@@ -70,7 +70,10 @@ outfile.write(outp)
 logfile.close()
 outfile.close()
 
+quitcode = None
 if outp == test["expected"]:
-    print("output: '" + outp + "', expected: '" + test["expected"] + "'" + ", OK")
+    print("(" + testfile + ", " + cdfile + ") " + "output: '" + outp + "', expected: '" + test["expected"] + "'" + ", OK")
 else:
-    print("output: '" + outp + "', expected: '" + test["expected"] + "'" + ", FAIL")
+    print("(" + testfile + ", " + cdfile + ") " + "output: '" + outp + "', expected: '" + test["expected"] + "'" + ", FAIL")
+    quitcode = 1
+quit(quitcode)
