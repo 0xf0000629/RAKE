@@ -1,5 +1,5 @@
-from stack_machine import *
 from translator import *
+from stack_machine import *
 import sys
 
 prelinked_tests = dict(
@@ -64,8 +64,12 @@ logs = []
 for i in range(len(result[0])):
     logs.append(json.dumps(result[0][i]))
 logfile.write("[" + ",\n".join(logs) + "]")
+logfile.write("\nOutput: '" + "".join(str(x)+'' for x in outp) + "'")
+logfile.write("\nTicks: " + str(result[2]))
+logfile.write("\nInsctructions: " + str(result[3]))
 outp = "".join(str(x)+'' for x in outp)
 outfile.write(outp)
+
 
 logfile.close()
 outfile.close()
