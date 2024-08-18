@@ -72,8 +72,8 @@ outfile.close()
 
 quitcode = None
 if outp == test["expected"]:
-    print("(" + testfile + ", " + cdfile + ") " + "output: '" + outp + "', expected: '" + test["expected"] + "'" + ", OK")
+    print("(" + tsfile + ", " + cdfile + ") " + "output: '" + outp + "', expected: '" + test["expected"] + "'" + ", OK")
 else:
-    print("(" + testfile + ", " + cdfile + ") " + "output: '" + outp + "', expected: '" + test["expected"] + "'" + ", FAIL")
+    print("(" + tsfile + ", " + cdfile + ") " + "output: '" + outp + "', expected: '" + test["expected"] + "'" + ", FAIL")
     quitcode = 1
 quit(quitcode)
