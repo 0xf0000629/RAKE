@@ -1,6 +1,6 @@
 # Лабораторная работа №3
 ---
-Глебов Андрей Станиславович P3212\
+### Глебов Андрей Станиславович P3212\
 `forth | stack | neum | hw | instr | struct | stream | port | cstr | prob1`\
 (Вариант с упрощением)
 ---
@@ -112,7 +112,7 @@ target_file - файл для вывода машинного кода\
 Тестирование выполняется скриптом [test_runner.py](test_runner.py)\
 Тестирование в командной строке:
 ``test_runner.py <code_file> <test_file> <output_file> <logs_file>``\
-Golden-тесты (``test_runner.py <test_name>``):\
+Golden-тесты (``test_runner.py <test_name>``):
 - cat ([code](golden_tests/tests/cat.leaf)|[input](golden_tests/tests/cat.json)) - копирует символы из ввода в вывод
 - hello ([code](golden_tests/tests/hello.leaf)|[input](golden_tests/tests/hello.json)) - выводит 'hello world!'
 - hello_user_name ([code](golden_tests/tests/hello_user_name.leaf)|[input](golden_tests/tests/hello_user_name.json)) - получает из ввода имя пользователя и приветствует его
